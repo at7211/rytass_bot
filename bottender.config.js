@@ -20,7 +20,11 @@ module.exports = {
       },
     },
   },
-  initialState: {},
+  initialState: {
+    ordering: false,
+    host: '',
+    orders: [],
+  },
   channels: {
     messenger: {
       enabled: false,
