@@ -1,69 +1,92 @@
-// index.js
+const random = require('random-item');
 
 async function startOrder(context) {
   const { user } = context.session;
 
-  // 設定為開團 state
+  // await context.postMessage('session', context.session);
+  console.log('user', user);
+  console.log('session', context.session);
+
   context.setState({
     ordering: true,
-    host: user,
+    host: user.id,
   });
 
-  await context.sendText(`${user.displayName} 開團囉! 大家快來點!`);
+  await context.postMessage(`${user.id} 開團囉! 大家快來點!`);
 }
 
 async function order(context) {
-  const { displayName } = context.session.user;
-  const [, item] = context.event.text.match(/^我也?要點?(.*)/);
+  const { name } = context.session.user;
+  const [, item] = context.event.message.text.match(/^我也?要點?(.*)/);
 
-  // 把訂單塞進 state 的 orders 中
   context.setState({
     orders: [
       ...context.state.orders,
       {
-        name: displayName,
+        name: name,
         order: item.trim(),
       },
     ],
   });
 
-  await context.sendText(`我知道 ${displayName} 你點的是 ${item}`);
+  await context.postMessage(
+    random([`我知道 ${name} 你點的是 ${item}`, '（筆記中.......', '好喔>__<'])
+  );
 }
 
 async function cutOff(context) {
-  await context.sendText('截止囉!');
+  const { host } = context.state;
+  const userId = context.session.user.id;
 
-  // 因為怕這個地方寫太多會搞錯重點
-  // 這邊就請各位自己想想看要怎麼把 orders 用好看的格式印出來吧，
-  await context.sendText(`訂單：${context.state.orders}....`);
+  if (host === userId) {
+    await context.postMessage('截止囉!');
 
-  // 把 state 重設
-  context.resetState();
+    const orders = context.state.orders
+      .map(item => `- ${item.order}`)
+      .join('\n');
+    await context.postMessage(`訂單：\n${orders}`);
+    await context.postMessage('大家記得要給錢喔>__<')
+
+    context.resetState();
+  } else {
+    await context.postMessage('不是你開的團，不讓你截止(#`皿´)');
+  }
 }
 
-// 沒開團的狀態下，輸入「開團」可以開團
-function 處理未開團指令(context) {
+async function unOrder(context) {
+  const { text } = context.event.message;
+
+  // how to use
+  if (/(怎麼?|如何)(用|操作|點|開團)/.test(text)) {
+    await context.postMessage(`
+      指令：\n
+      - 開團：請輸入『開團』\n
+      - 截止： 請輸入『截止』或『收』\n
+      - 下訂單： 請輸入『我要點XXX』
+    `);
+  }
+
+  // start order
   if (context.event.text === '開團') {
     return startOrder;
   }
 }
 
-// 已開團的狀態下，有兩種指令可以用
-function 處理開團中指令(context) {
-  const { text } = context.event.text;
+function isOrdering(context) {
+  const { text } = context.event.message;
+
   if (/^我也?要點?(.*)/.test(text)) {
     return order;
   }
-  if (text === '截止') {
+  if (text === '截止' || text === '收') {
     return cutOff;
   }
 }
 
-// 按照 state 決定現在的狀態要用哪個子 function
 module.exports = async function App(context) {
   if (context.state.ordering) {
-    return 處理開團中指令;
+    return isOrdering;
   }
 
-  return 處理未開團指令;
+  return unOrder;
 };
