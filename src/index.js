@@ -4,8 +4,6 @@ async function startOrder(context) {
   const { user } = context.session;
 
   // await context.postMessage('session', context.session);
-  console.log('user', user);
-  console.log('session', context.session);
 
   context.setState({
     ordering: true,
@@ -19,15 +17,35 @@ async function order(context) {
   const { name } = context.session.user;
   const [, item] = context.event.message.text.match(/^我也?要點?(.*)/);
 
-  context.setState({
-    orders: [
-      ...context.state.orders,
-      {
-        name: name,
-        order: item.trim(),
-      },
-    ],
-  });
+  console.log('context.state.orders', context.state.orders);
+
+  const index = context.state.orders.findIndex(o => o && o.order === item);
+
+  console.log('index', index);
+  if (!~index) {
+    context.setState({
+      orders: [
+        ...context.state.orders,
+        {
+          name: name,
+          order: item.trim(),
+          count: 1,
+        },
+      ],
+    });
+  } else {
+    context.setState({
+      orders: [
+        ...context.state.orders.slice(0, index),
+        {
+          name: name,
+          order: item.trim(),
+          count: context.state.orders[index].count + 1,
+        },
+        ...context.state.orders.slice(index + 1),
+      ],
+    });
+  }
 
   await context.postMessage(
     random([`我知道 ${name} 你點的是 ${item}`, '（筆記中.......', '好喔>__<'])
@@ -42,10 +60,14 @@ async function cutOff(context) {
     await context.postMessage('截止囉!');
 
     const orders = context.state.orders
-      .map(item => `- ${item.order}`)
+      .map(item => {
+        const counts = item.count > 1 ? `* ${item.count}` : null;
+
+        return `- ${item.order} ${counts}`;
+      })
       .join('\n');
     await context.postMessage(`訂單：\n${orders}`);
-    await context.postMessage('大家記得要給錢喔>__<')
+    await context.postMessage('大家記得要給錢喔>__<');
 
     context.resetState();
   } else {
