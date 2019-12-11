@@ -5,5 +5,6 @@ This project was bootstrapped with
 
 ## TODO:
 - 顯示開團者的付款資訊
-- 數量判定
 - 飲料幾分冰幾分糖
+- 誰還沒付錢
+- 我點了什麼
