@@ -6,5 +6,5 @@ module.exports = async context => {
     host: user.id,
   });
 
-  await context.postMessage(`${user.id} 開團囉! 大家快來點!`);
+  await context.postMessage('開團囉! 大家快來點!');
 };
