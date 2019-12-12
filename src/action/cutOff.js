@@ -8,9 +8,9 @@ module.exports = async context => {
     const orders = context.state.orders
       .map(item => {
         const counts = item.count > 1 ? `* ${item.count}` : '';
-        console.log('item', item);
+        const type = item.type ? `(${item.type})` : '';
 
-        return `- ${item.order} ${counts} (${item.type})`;
+        return `- ${item.order} ${counts} ${type}`;
       })
       .join('\n');
     await context.postMessage(`訂單：\n${orders}`);
