@@ -7,7 +7,6 @@ module.exports = async context => {
 
   items.forEach(item => {
     const [, content, num] = item.match(/^([^\*xX]*)[\*Xx]?(\d*)?$/);
-    const index = context.state.orders.findIndex(o => o && o.order === content);
 
     if (/(微微|分糖|熱的|溫的|微糖|無糖|去冰|分冰)/.test(content)) {
       context.setState({
@@ -20,30 +19,16 @@ module.exports = async context => {
         ],
       });
     } else {
-      if (!~index) {
-        context.setState({
-          orders: [
-            ...context.state.orders,
-            {
-              order: content.trim(),
-              count: Number(num) || 1,
-            },
-          ],
-        });
-      } else {
-        context.setState({
-          orders: [
-            ...context.state.orders.slice(0, index),
-            {
-              order: content.trim(),
-              count: Number(num)
-                ? context.state.orders[index].count + Number(num)
-                : context.state.orders[index].count + 1,
-            },
-            ...context.state.orders.slice(index + 1),
-          ],
-        });
-      }
+      context.setState({
+        orders: [
+          ...context.state.orders,
+          {
+            order: content.trim(),
+            count: Number(num) || 1,
+            type: '',
+          },
+        ],
+      });
     }
   });
 
