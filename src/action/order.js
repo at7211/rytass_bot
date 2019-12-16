@@ -1,7 +1,7 @@
 const random = require('random-item');
 
 module.exports = async context => {
-  const [, ordered] = context.event.message.text.match(/^我也?要點?(.*)/);
+  const [, ordered] = context.event.message.text.match(/我也?要點?(.*)/);
 
   const items = ordered.split(' ').filter(d => d.match(/(\S\D)/));
 
