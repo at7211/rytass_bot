@@ -6,10 +6,15 @@
     "dev": "bottender dev",
     "lint": "eslint .",
     "start": "bottender start",
-    "test": "jest"
+    "test": "jest",
+    "server-dev": "nodemon server.js",
+    "server-start": "cross-env NODE_ENV=production node server.js"
   },
   "dependencies": {
-    "bottender": "1.0.0",
+    "body-parser": "^1.19.0",
+    "bottender": "next",
+    "cross-env": "^6.0.3",
+    "express": "^4.17.1",
     "random-item": "^3.0.0"
   },
   "devDependencies": {
