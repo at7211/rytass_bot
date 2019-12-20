@@ -1,4 +1,5 @@
 const random = require('random-item');
+const { chain } = require('bottender');
 
 module.exports = async context => {
   const [, ordered] = context.event.message.text.match(/我也?要點?(.*)/);
@@ -7,6 +8,23 @@ module.exports = async context => {
 
   items.forEach(item => {
     const [, content, num] = item.match(/^([^\*xX]*)[\*Xx]?(\d*)?$/);
+
+    if (/(感謝|謝謝)/.test(content)) return;
+
+    if ((/^([^\+＋加]*)[\+＋加](.*)/).test(content)) {
+      const [, order, type] = content.match(/^([^\+＋加]*)[\+＋加](.*)/);
+
+      context.setState({
+        orders: [
+          ...context.state.orders,
+          {
+            order: order.trim(),
+            count: Number(num) || 1,
+            type: type || '',
+          },
+        ],
+      });
+    }
 
     if (/(微微|分糖|熱的|溫的|微糖|無糖|去冰|分冰)/.test(content)) {
       context.setState({
