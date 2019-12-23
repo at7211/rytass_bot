@@ -6,10 +6,12 @@
     "dev": "bottender dev",
     "lint": "eslint .",
     "start": "bottender start",
-    "test": "jest"
+    "test": "jest",
+    "server-dev": "nodemon server.js",
+    "server-start": "node server.js"
   },
   "dependencies": {
-    "bottender": "1.0.0",
+    "bottender": "^1.0.5",
     "random-item": "^3.0.0"
   },
   "devDependencies": {
