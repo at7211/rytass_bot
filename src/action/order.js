@@ -1,5 +1,4 @@
 const random = require('random-item');
-const { chain } = require('bottender');
 
 module.exports = async context => {
   const [, ordered] = context.event.message.text.match(/我也?要點?(.*)/);
@@ -9,44 +8,46 @@ module.exports = async context => {
   items.forEach(item => {
     const [, content, num] = item.match(/^([^\*xX]*)[\*Xx]?(\d*)?$/);
 
-    if (/(感謝|謝謝)/.test(content)) return;
+    switch (true) {
+      case /(感謝|謝謝)/.test(content):
+        break;
+      case (/^([^\+＋加]*)[\+＋加](.*)/).test(content):
+        const [, order, type] = content.match(/^([^\+＋加]*)[\+＋加](.*)/);
 
-    if ((/^([^\+＋加]*)[\+＋加](.*)/).test(content)) {
-      const [, order, type] = content.match(/^([^\+＋加]*)[\+＋加](.*)/);
-
-      context.setState({
-        orders: [
-          ...context.state.orders,
-          {
-            order: order.trim(),
-            count: Number(num) || 1,
-            type: type || '',
-          },
-        ],
-      });
-    }
-
-    if (/(微微|分糖|熱的|溫的|微糖|無糖|去冰|分冰)/.test(content)) {
-      context.setState({
-        orders: [
-          ...context.state.orders.slice(0, context.state.orders.length - 1),
-          {
-            ...context.state.orders[context.state.orders.length - 1],
-            type: content || '',
-          },
-        ],
-      });
-    } else {
-      context.setState({
-        orders: [
-          ...context.state.orders,
-          {
-            order: content.trim(),
-            count: Number(num) || 1,
-            type: '',
-          },
-        ],
-      });
+        context.setState({
+          orders: [
+            ...context.state.orders,
+            {
+              order: order.trim(),
+              count: Number(num) || 1,
+              type: type || '',
+            },
+          ],
+        });
+        break;
+      case /(微微|分糖|熱的|溫的|微糖|無糖|去冰|分冰|半半)/.test(content):
+        context.setState({
+          orders: [
+            ...context.state.orders.slice(0, context.state.orders.length - 1),
+            {
+              ...context.state.orders[context.state.orders.length - 1],
+              type: content || '',
+            },
+          ],
+        });
+        break;
+      default:
+        context.setState({
+          orders: [
+            ...context.state.orders,
+            {
+              order: content.trim(),
+              count: Number(num) || 1,
+              type: '',
+            },
+          ],
+        });
+        break;
     }
   });
 

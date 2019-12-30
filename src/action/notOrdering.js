@@ -66,6 +66,6 @@ function howToUse(context) {
 module.exports = async () => {
   return router([
     text(/(怎麼?|如何)(用|操作|點|開團|指令)/, howToUse),
-    text('開團', startOrder),
+    text(/^開團/, startOrder),
   ]);
 };

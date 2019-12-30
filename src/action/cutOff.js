@@ -11,11 +11,13 @@ module.exports = async context => {
 
     const orders = context.state.orders
       .reduce((accum, curr) => {
-        const index = accum.length ? (accum.findIndex(
-          o => o.order === curr.order && o.type === curr.typed
-        )) : -1;
+        console.log('accum', accum);
+        console.log('curr', curr);
+        const index = accum.findIndex(o => (o.order === curr.order) && (o.type === curr.type));
 
-        if (!~index)
+        console.log("index", index);
+
+        if (!~index) {
           return [
             ...accum,
             {
@@ -24,21 +26,23 @@ module.exports = async context => {
               count: curr.count,
             },
           ];
+        }
 
         return [
-          ...accum.slice(0, index - 1),
+          ...accum.slice(0, index),
           {
-            order: context.state.orders[index].order,
-            type: context.state.orders[index].type,
-            count: context.state.orders[index].count + curr.count,
+            order: accum[index].order,
+            type: accum[index].type,
+            count: accum[index].count + curr.count,
           },
+          ...accum.slice(index + 1),
         ];
       }, [])
       .map(item => {
         const counts = item.count > 1 ? `* ${item.count}` : '';
         const type = item.type ? `(${item.type})` : '';
 
-        return `- ${item.order} ${counts} ${type}`;
+        return `- ${item.order} ${type} ${counts}`;
       })
       .join('\n');
     await context.postMessage(`訂單：\n${orders}`);
