@@ -11,11 +11,7 @@ module.exports = async context => {
 
     const orders = context.state.orders
       .reduce((accum, curr) => {
-        console.log('accum', accum);
-        console.log('curr', curr);
         const index = accum.findIndex(o => (o.order === curr.order) && (o.type === curr.type));
-
-        console.log("index", index);
 
         if (!~index) {
           return [

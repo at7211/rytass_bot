@@ -14,12 +14,13 @@ module.exports = async context => {
 
   if (text.length === 1) return;
 
-  console.log('text', text);
   const menu = await getMenu(text[1]);
 
-  console.log('menu', menu);
+  if (menu) {
+    const list = menu.map(item => `- ${item}`).join('\n');
 
-  const list = menu.map(item => `- ${item}`).join('\n');
-
-  await context.postMessage(`這是菜單\n${list}`);
+    await context.postMessage(`這是菜單\n${list}`);
+  } else {
+    await context.postMessage('找不到菜單ＱＡＱ');
+  }
 };

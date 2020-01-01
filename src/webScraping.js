@@ -10,14 +10,28 @@ module.exports = function menu(link) {
       const [, url] = link.match(/<(https.*)>/);
       await page.goto(url);
       const getItems = await page.evaluate(() => {
-        const grabTitles = document.querySelectorAll('#clamped-content-menu_item_title')
-        const titles = Array.from(grabTitles).map(m => {
-          const price = m.parentNode.parentNode.parentNode.childNodes[1].firstChild.innerText;
+        let titles = '';
 
-          return `${m.innerText} ${price}`;
-        });
+        // uber
+        if (link.includes('uber')) {
+          const grabTitles = document.querySelectorAll('#clamped-content-menu_item_title');
+          titles = Array.from(grabTitles).map(m => {
+            const price = m.parentNode.parentNode.parentNode.childNodes[1].firstChild.innerText;
 
-        console.log('titles', titles);
+            return `${m.innerText} ${price}`;
+          });
+        }
+
+        // deliveroo
+        if (link.includes('deliveroo')) {
+          const grabTitles = document.querySelectorAll('.menu-index-page__item-title');
+          titles = Array.from(grabTitles).map(m => {
+            const price = m.nextElementSibling.nextElementSibling.innerText;
+
+            return `${m.innerText} ${price}`;
+          });
+        }
+
         return titles;
       });
 
