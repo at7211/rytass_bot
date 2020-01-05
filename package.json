@@ -11,7 +11,7 @@
     "server-start": "node server.js"
   },
   "dependencies": {
-    "bottender": "^1.0.5",
+    "bottender": "^1.1.0",
     "puppeteer": "^2.0.0",
     "random-item": "^3.0.0"
   },
