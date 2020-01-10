@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "bottender": "^1.1.0",
+    "node-fetch": "^2.6.0",
     "puppeteer": "^2.0.0",
     "random-item": "^3.0.0"
   },
