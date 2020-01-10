@@ -18,15 +18,15 @@ module.exports = async context => {
       case /(感謝|謝謝)/.test(content):
         break;
       case /(不加|不＋｜不+)/.test(content):
-        const [, order, , type] = content.match(/([^\不]*)(不加|不＋|不+)(.*)/)
+        const [, ordered, , notAddType] = content.match(/([^\不]*)(不加|不＋|不+)(.*)/)
 
         context.setState({
           orders: [
             ...context.state.orders,
             {
-              order: order.trim(),
+              order: ordered.trim(),
               count: Number(num) || 1,
-              type: `不加${type}` || '',
+              type: `不加${notAddType}` || '',
             },
           ],
         });
