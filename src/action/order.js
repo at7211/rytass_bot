@@ -1,4 +1,5 @@
 const random = require('random-item');
+const toNum = require('../helper/chineseToNum');
 // const fetch = require('node-fetch');
 
 module.exports = async context => {
@@ -13,6 +14,7 @@ module.exports = async context => {
 
   items.forEach(item => {
     const [, content, num] = item.match(/^([^\*xX]*)[\*Xx]?(\d*)?$/);
+    const hasChineseNumItem = item.match(/(一|二|兩|三|四|五|六|七|八|九|十).(.*)/);
 
     switch (true) {
       case /(感謝|謝謝)/.test(content):
@@ -24,8 +26,8 @@ module.exports = async context => {
           orders: [
             ...context.state.orders,
             {
-              order: ordered.trim(),
-              count: Number(num) || 1,
+              order: (hasChineseNumItem && hasChineseNumItem[2]) || ordered.trim(),
+              count: (hasChineseNumItem && toNum(hasChineseNumItem[1])) || Number(num) || 1,
               type: `不加${notAddType}` || '',
             },
           ],
@@ -39,8 +41,8 @@ module.exports = async context => {
           orders: [
             ...context.state.orders,
             {
-              order: order.trim(),
-              count: Number(num) || 1,
+              order: (hasChineseNumItem && hasChineseNumItem[2]) || ordered.trim(),
+              count: (hasChineseNumItem && toNum(hasChineseNumItem[1])) || Number(num) || 1,
               type: type || '',
             },
           ],
@@ -63,8 +65,8 @@ module.exports = async context => {
           orders: [
             ...context.state.orders,
             {
-              order: content.trim(),
-              count: Number(num) || 1,
+              order: (hasChineseNumItem && hasChineseNumItem[2]) || content.trim(),
+              count: (hasChineseNumItem && toNum(hasChineseNumItem[1])) || Number(num) || 1,
               type: '',
             },
           ],

@@ -41,10 +41,16 @@ module.exports = async context => {
         return `- ${item.order} ${type} ${counts}`;
       })
       .join('\n');
-    await context.postMessage(`訂單：\n${orders}`);
+
+    if (!orders) {
+      await context.postMessage('沒訂單 QAQ');
+    } else {
+      await context.postMessage(`訂單：\n${orders}`);
+    }
 
     if (!~memberIndex) {
-      context.postMessage('痾......沒有開團者的付款資訊ＱＡＱ');
+      await context.postMessage('痾......沒有開團者的付款資訊');
+      await context.postMessage('但大家還是記得要給錢喔>__<');
     } else {
       await context.postMessage({
         "blocks": [
@@ -85,11 +91,11 @@ module.exports = async context => {
             "image_url": members[memberIndex].payment.luckyPay,
             "alt_text": "lucky pay"
           },
-        ]
+        ],
       });
-    }
 
-    await context.postMessage('大家記得要給錢喔>__<');
+      await context.postMessage('大家記得要給錢喔>__<');
+    }
 
     context.resetState();
   } else {
