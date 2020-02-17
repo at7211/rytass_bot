@@ -3,9 +3,11 @@ const order = require('./order');
 const cutOff = require('./cutOff');
 const cancel = require('./cancel');
 const modify = require('./modify');
+const restart = require('./restart');
 
 module.exports = () => {
   return router([
+    text('重啟', restart),
     text(/我要(取消|收回)/, cancel),
     text(/修改訂單/, modify),
     text(/^我也?要點?(.*)/, order),

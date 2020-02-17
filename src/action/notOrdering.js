@@ -40,6 +40,11 @@ function howToUse(context) {
           "type": "mrkdwn",
           "text": "*取消：*\n請輸入『我要取消』"
         },
+        ,
+        {
+          "type": "mrkdwn",
+          "text": "*重啟：*\n請輸入『重啟』"
+        },
       ]
     },
     {
